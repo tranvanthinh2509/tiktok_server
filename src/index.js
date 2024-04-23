@@ -23,6 +23,7 @@ mongoose.connect(`${process.env.Mongo_DB}`)
         console.log('Connect db success')
     })
     .catch((err) => {
+        console.log('Connect db that bai')
         console.log(err)
     })
 

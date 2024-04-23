@@ -79,12 +79,12 @@ const getDetailVideo = (id) => {
     })
 }
 
-const getAllVideo = (limit = 2, page = 0) => {
+const getAllVideo = (limit = 3, page = 0) => {
     return new Promise(async (resolve, reject) => {
     
         try {
             const totalVideo = await Video.find().count()
-            const allVideo = await Video.find().populate({path: 'userId'}).limit(limit).skip(page * limit).sort({createdAt: -1, updatedAt: -1})
+            const allVideo = await Video.find().limit(limit).skip(page * limit).populate({path: 'userId', select: ['name', 'nickName', 'avatar','followings','followers']})
             resolve({
                 status: 'OK',
                 message: 'All Video',
