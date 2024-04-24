@@ -84,7 +84,7 @@ const getAllVideo = (limit = 3, page = 0) => {
     
         try {
             const totalVideo = await Video.find().count()
-            const allVideo = await Video.find().limit(limit).skip(page * limit).populate({path: 'userId', select: ['name', 'nickName', 'avatar','followings','followers']})
+            const allVideo = await Video.find().sort({createdAt: -1, updatedAt: -1}).limit(limit).skip(page * limit).populate({path: 'userId', select: ['name', 'nickName', 'avatar','followings','followers']})
             resolve({
                 status: 'OK',
                 message: 'All Video',
@@ -164,17 +164,25 @@ const likeVideo = (video, currentUser) => {
     })
 }
 
-const getRecentVideo = (userFollowing) => {
+const getRecentVideo = (idList) => {
     return new Promise(async (resolve, reject) => {
         try {
+
+            const followingList = []
+            for(let i=0; i<=idList.length;i++) {
+                const recentVideo = await Video.find({
+                    userId: idList[i]
+                }).sort({createdAt: -1, updatedAt: -1}).populate({path: 'userId', select: ['name', 'nickName','avatar', 'followings', 'followers', 'createdAt']})
+                if(recentVideo !== null) {
+                    followingList.push(...recentVideo);
+                }
+                
+            }
             
-            const recentVideo = await Video.find({
-                userId: userFollowing
-            }).sort({createdAt: -1, updatedAt: -1}).populate({path: 'userId', select: ['name', 'nickName', 'avatar', 'followings', 'followers', 'createdAt']})
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
-                data: recentVideo
+                data: followingList
             })
             
         } catch (e) {
@@ -184,17 +192,47 @@ const getRecentVideo = (userFollowing) => {
     })
 }
 
-const getARecentVideo = (userFollowing) => {
+const getARecentVideo = (idList) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const followingList = []
+            for(let i=0; i<idList.length;i++) { 
+                const recentVideo = await Video.findOne({
+                    userId : idList[i]
+                }).sort({createdAt: -1, updatedAt: -1}).populate({path: 'userId', select: ['name', 'nickName', 'avatar']})
+                if(recentVideo !== null) {
+                    followingList.push(recentVideo);
+                }
+            }
             
-            const recentVideo = await Video.findOne({
-                userId : userFollowing
-            }).sort({createdAt: -1, updatedAt: -1}).populate({path: 'userId', select: ['name', 'nickName', 'avatar']})
+            
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
-                data: recentVideo
+                data: followingList
+            })
+            
+        } catch (e) {
+            reject(e)
+            
+        }
+    })
+}
+
+const getVideoOfMe = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+                const listVideo = await Video.find({
+                    userId : id
+                }).sort({createdAt: -1, updatedAt: -1}).populate({path: 'userId', select: ['name', 'nickName', 'avatar']})
+
+            
+            
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: listVideo
             })
             
         } catch (e) {
@@ -212,5 +250,6 @@ module.exports = {
     deleteVideo,
     likeVideo,
     getRecentVideo,
-    getARecentVideo
+    getARecentVideo,
+    getVideoOfMe
 }

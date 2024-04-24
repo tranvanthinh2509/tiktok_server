@@ -126,8 +126,14 @@ const likeVideo = async (req, res) => {
 
 const getRecentVideo = async (req, res) => {
     try {
-        const userFollowing = req.params.id
-        const response = await VideoSerVice.getRecentVideo(userFollowing)
+        const { userFollowing } = req.body
+        const idList = []
+        userFollowing.map((user) => {
+            idList.push(user._id)
+        })
+        
+        console.log('123 ', idList)
+        const response = await VideoSerVice.getRecentVideo(idList)
         return res.status(200).json(response)
 
         
@@ -140,8 +146,28 @@ const getRecentVideo = async (req, res) => {
 }
 const getARecentVideo = async (req, res) => {
     try {
-        const userFollowing = req.params.id
-        const response = await VideoSerVice.getARecentVideo(userFollowing)
+        const { friends } = req.body
+        
+        const idList = []
+        friends.map((user) => {
+            idList.push(user._id)
+        })
+        const response = await VideoSerVice.getARecentVideo(idList)
+        return res.status(200).json(response)
+
+        
+    } catch(e) {
+        return res.status(404).json({
+            message: e,
+            }
+        )
+    }
+}
+
+const getVideoOfMe = async (req, res) => {
+    try {
+        const id = req.params.id
+        const response = await VideoSerVice.getVideoOfMe(id)
         return res.status(200).json(response)
 
         
@@ -161,6 +187,7 @@ module.exports = {
     deleteVideo,
     likeVideo,
     getRecentVideo,
-    getARecentVideo
+    getARecentVideo,
+    getVideoOfMe
 
 }
