@@ -11,10 +11,15 @@ const createComment = (newComment) => {
         parentId,
       });
 
+      const oke = await newComment.toJSON();
+      const data = await Comment.findOne({ _id: oke._id }).populate({
+        path: "userId",
+        select: ["name", "nickName", "avatar"],
+      });
       resolve({
         status: "OK",
         message: "SUCCESS",
-        data: newComment,
+        data: data,
       });
     } catch (e) {
       reject(e);
