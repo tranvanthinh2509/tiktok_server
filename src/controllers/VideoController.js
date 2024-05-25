@@ -160,6 +160,19 @@ const getVideoOfMe = async (req, res) => {
   }
 };
 
+const comment = async (req, res) => {
+  try {
+    const { id, type, idCmt } = req.query;
+    console.log(id, type, idCmt);
+    const response = await VideoSerVice.comment(id, type, idCmt);
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
+  }
+};
+
 module.exports = {
   createVideo,
   updateVideo,
@@ -170,4 +183,5 @@ module.exports = {
   getRecentVideo,
   getARecentVideo,
   getVideoOfMe,
+  comment,
 };

@@ -12,4 +12,6 @@ router.put("/like/:id", videoController.likeVideo);
 router.post("/recent", videoController.getRecentVideo);
 router.post("/a_recent", videoController.getARecentVideo);
 router.get("/videoOfMe/:id", videoController.getVideoOfMe);
+router.put("/comment", videoController.comment);
+
 module.exports = router;

@@ -259,6 +259,33 @@ const getVideoOfMe = (id) => {
   });
 };
 
+const comment = (id, type, idCmt) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const video1 = await Video.findById(id);
+
+      // const currentUser1 = await Video.findById(currentUser);
+
+      if (type === "push") {
+        await video1.updateOne({ $push: { comment: idCmt } });
+        resolve({
+          status: "OK",
+          message: "Success",
+        });
+      }
+      if (type === "pull") {
+        await video1.updateOne({ $pull: { comment: idCmt } });
+        resolve({
+          status: "OK",
+          message: "you delete Comment",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   createVideo,
   updateVideo,
@@ -269,4 +296,5 @@ module.exports = {
   getRecentVideo,
   getARecentVideo,
   getVideoOfMe,
+  comment,
 };
