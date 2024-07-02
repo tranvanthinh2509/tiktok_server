@@ -123,15 +123,51 @@ const deleteUser = (id) => {
   });
 };
 
-const getAllUser = () => {
+const updateAccount = (id, data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const allUser = await User.find({});
+      const checkUser = await User.findOne({
+        _id: id,
+      });
+      if (checkUser === null) {
+        resolve({
+          status: "Ok",
+          message: "The user is not defined",
+        });
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
+
+      resolve({
+        status: "OK",
+        message: "SUCCESS",
+        data: updatedUser,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const getAllUser = (limit = 1, page = 0, title = "") => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const totalVideo = await User.find().count();
+      const allUser = await User.find({
+        $or: [
+          { name: { $regex: title, $options: "i" } },
+          { nickName: { $regex: title, $options: "i" } },
+        ],
+      })
+        .limit(limit)
+        .skip(page * limit);
 
       resolve({
         status: "OK",
         message: "All User",
         data: allUser,
+        total: totalVideo,
+        pageCurent: page + 1,
+        totalPage: Math.ceil(totalVideo / limit),
       });
     } catch (e) {
       reject(e);
@@ -368,6 +404,7 @@ module.exports = {
   loginUser,
   updateUser,
   deleteUser,
+  updateAccount,
   getAllUser,
   getDetailUser,
   search,

@@ -70,10 +70,11 @@ const getDetailVideo = async (req, res) => {
 
 const getAllVideo = async (req, res) => {
   try {
-    const { limit, page } = req.query;
+    const { limit, page, title } = req.query;
     const response = await VideoSerVice.getAllVideo(
       Number(limit),
-      Number(page)
+      Number(page),
+      title
     );
     return res.status(200).json(response);
   } catch (e) {

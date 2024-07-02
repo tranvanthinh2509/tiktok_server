@@ -138,9 +138,34 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateAccount = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const data = req.body;
+
+    if (!userId) {
+      return res.status(200).json({
+        status: "Err",
+        message: "The userId is required",
+      });
+    }
+    const response = await UserSerVice.updateAccount(userId, data);
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
+  }
+};
 const getAllUser = async (req, res) => {
   try {
-    const response = await UserSerVice.getAllUser();
+    const { limit, page, title } = req.query;
+
+    const response = await UserSerVice.getAllUser(
+      Number(limit),
+      Number(page),
+      title
+    );
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -250,6 +275,7 @@ module.exports = {
   loginUser,
   updateUser,
   deleteUser,
+  updateAccount,
   getAllUser,
   getDetailUser,
   refreshToken,
